@@ -181,6 +181,9 @@ class NpzFile(Mapping):
 
     def __init__(self, fid, own_fid=False, allow_pickle=False,
                  pickle_kwargs=None):
+        # Make __exit__ safe if zipfile_factory raises an exception
+        self.zip = None
+        self.fid = None
         # Import is postponed to here since zipfile depends on gzip, an
         # optional component of the so-called standard library.
         _zip = zipfile_factory(fid)
@@ -197,8 +200,6 @@ class NpzFile(Mapping):
         self.f = BagObj(self)
         if own_fid:
             self.fid = fid
-        else:
-            self.fid = None
 
     def __enter__(self):
         return self
